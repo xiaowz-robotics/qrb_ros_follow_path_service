@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# Copyright (c) 2026 Qualcomm Innovation Center, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
 from launch import LaunchDescription
@@ -11,12 +11,24 @@ from launch.substitutions import PathJoinSubstitution
 
 
 def generate_launch_description():
-    """Launch file to bring up qti navigation node standalone."""
+    scan_topic_arg = DeclareLaunchArgument(
+        'scan_topic',
+        default_value='scan_filtered',
+        description='LaserScan input topic'
+    )
+
     qti_navigation_node = Node(
         package='qrb_ros_follow_path',
         executable='qrb_ros_follow_path',
         output='screen',
-        emulate_tty=True
+        emulate_tty=True,
+        remappings=[
+            ('scan', LaunchConfiguration('scan_topic')),
+        ],
     )
 
-    return LaunchDescription([qti_navigation_node])
+    return LaunchDescription([
+        scan_topic_arg,
+        qti_navigation_node
+    ])
+
